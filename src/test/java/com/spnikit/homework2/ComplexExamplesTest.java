@@ -4,16 +4,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static com.spnikit.homework2.ComplexExamples.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ComplexExamplesTest {
 
     @Test
-    public void testFuzzySearch(){
-        Assertions.assertTrue(fuzzySearch("car", "ca6$$#_rtwheel")); // true
-        Assertions.assertTrue(fuzzySearch("cwhl", "cartwheel")); // true
-        Assertions.assertTrue(fuzzySearch("cwhee", "cartwheel")); // true
-        Assertions.assertTrue(fuzzySearch("cartwheel", "cartwheel")); // true
-        Assertions.assertFalse(fuzzySearch("cwheeel", "cartwheel")); // false
-        Assertions.assertFalse(fuzzySearch("lw", "cartwheel")); // false
+    public void testFuzzySearch() {
+
+        assertAll(() -> {
+            assertTrue(fuzzySearch("car", "ca6$$#_rtwheel")); // true
+            assertTrue(fuzzySearch("cwhl", "cartwheel")); // true
+            assertTrue(fuzzySearch("cwhee", "cartwheel")); // true
+            assertTrue(fuzzySearch("cartwheel", "cartwheel")); // true
+            assertFalse(fuzzySearch("cwheeel", "cartwheel")); // false
+            assertFalse(fuzzySearch("lw", "cartwheel")); // false
+        });
     }
 }
