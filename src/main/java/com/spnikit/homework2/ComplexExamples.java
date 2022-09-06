@@ -1,6 +1,12 @@
 package com.spnikit.homework2;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static java.util.Comparator.*;
+import static java.util.stream.Collectors.*;
 
 public class ComplexExamples {
 
@@ -32,6 +38,14 @@ public class ComplexExamples {
         @Override
         public int hashCode() {
             return Objects.hash(getId(), getName());
+        }
+
+        @Override
+        public String toString() {
+            return "Person{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    '}';
         }
     }
 
@@ -101,7 +115,8 @@ public class ComplexExamples {
         Task1
             Убрать дубликаты, отсортировать по идентификатору, сгруппировать по имени
 
-            Что должно получиться Key: Amelia
+            Что должно получиться
+                Key: Amelia
                 Value:4
                 Key: Emily
                 Value:1
@@ -111,13 +126,31 @@ public class ComplexExamples {
                 Value:1
          */
 
+        var result = Arrays.stream(RAW_DATA)
+                .distinct() // remove duplicates
+                .sorted(comparing(Person::getId)) // sort by id
+                .collect(groupingBy(Person::getName, counting())); // group by name
 
+
+        System.out.println(result);
 
         /*
+
+
+
+
         Task2
 
-            [3, 4, 2, 7], 10 -> [3, 7] - вывести пару менно в скобках, которые дают сумму - 10
+            [3, 4, 2, 7], 10 -> [3, 7] - вывести пару именно в скобках, которые дают сумму - 10
          */
+
+        System.out.println("**********************Task 2**********************");
+
+
+        int[] array = {3, 4, 2, 7};
+
+        printValuesWhichSumEqualsTo(array, 10);
+
 
 
 
@@ -133,7 +166,56 @@ public class ComplexExamples {
                     fuzzySearch("lw", "cartwheel"); // false
          */
 
+        System.out.println("**********************Task 3**********************");
+
+        System.out.println(fuzzySearch("cwheeel", "cartwheel"));
 
     }
+
+    // method for task2
+    private static void printValuesWhichSumEqualsTo(int[] array, int sum) {
+
+        Objects.requireNonNull(array);
+
+        Arrays.stream(array).boxed()
+                .flatMap(outer -> Arrays.stream(array)
+                        .boxed()
+                        .filter(inner -> !inner.equals(outer) && (inner + outer == sum)) // find pair with sum 10, exclude itself
+                        .map(inner -> new Integer[]{outer, inner}))// make array from pair
+                .findFirst()// get first value if any
+                .map(Arrays::deepToString) // for decorative purpose
+                .ifPresentOrElse(System.out::println,
+                        () -> System.out.println("No values that meet condition of sum = " + sum)); //
+    }
+
+
+    // method for task3
+    public static boolean fuzzySearch(String valueToSearch, String template) {
+        Objects.requireNonNull(valueToSearch);
+        Objects.requireNonNull(template);
+
+        if (valueToSearch.equalsIgnoreCase(template)) {
+            return true;
+        }
+
+        String[] templateArr = template.toLowerCase().split("");
+        String[] valueToSearchArr = valueToSearch.toLowerCase().split("");
+
+        int position = 0;
+        boolean matchFound = false;
+
+        for (String charInSearch : valueToSearchArr) {
+            matchFound = false;
+            for (; position < templateArr.length && !matchFound; position++) {
+
+                if (charInSearch.equals(templateArr[position])) {
+                    matchFound = true;
+                }
+            }
+        }
+        return matchFound;
+    }
+
+
 }
 
