@@ -1,11 +1,13 @@
 package com.spnikit.homework2;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import static java.util.Comparator.*;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.*;
 
 public class ComplexExamples {
@@ -126,13 +128,17 @@ public class ComplexExamples {
                 Value:1
          */
 
-        var result = Arrays.stream(RAW_DATA)
-                .distinct() // remove duplicates
+        Arrays.stream(RAW_DATA)
+                .distinct()
+                .filter(Objects::nonNull)// remove duplicates
                 .sorted(comparing(Person::getId)) // sort by id
-                .collect(groupingBy(Person::getName, counting())); // group by name
+                .collect(groupingBy(Person::getName, counting()))// group by name
+                .forEach((key, value) -> {
+                    System.out.println("Key: " + key);
+                    System.out.println("Value: " + value);
+                });
 
 
-        System.out.println(result);
 
         /*
 
@@ -168,24 +174,29 @@ public class ComplexExamples {
 
         System.out.println("**********************Task 3**********************");
 
-        System.out.println(fuzzySearch("cwheeel", "cartwheel"));
+        System.out.println(fuzzySearch("lw", "cartwheel"));
 
     }
 
     // method for task2
     private static void printValuesWhichSumEqualsTo(int[] array, int sum) {
-
         Objects.requireNonNull(array);
 
-        Arrays.stream(array).boxed()
-                .flatMap(outer -> Arrays.stream(array)
-                        .boxed()
-                        .filter(inner -> !inner.equals(outer) && (inner + outer == sum)) // find pair with sum 10, exclude itself
-                        .map(inner -> new Integer[]{outer, inner}))// make array from pair
-                .findFirst()// get first value if any
-                .map(Arrays::deepToString) // for decorative purpose
-                .ifPresentOrElse(System.out::println,
-                        () -> System.out.println("No values that meet condition of sum = " + sum)); //
+        var map = new HashSet<Integer>();
+
+        for (int num : array) {
+            int remainder = sum - num;
+
+            if (!map.contains(remainder)) {
+                map.add(num);
+            } else {
+                System.out.println(
+                        Arrays.toString(array) + ", " + sum + " -> " + Arrays.toString(new int[]{remainder, num})
+                );
+                return;
+            }
+        }
+        System.out.println(Arrays.toString(array) + ", " + sum + " -> " + "No such values");
     }
 
 
@@ -201,19 +212,18 @@ public class ComplexExamples {
         String[] templateArr = template.toLowerCase().split("");
         String[] valueToSearchArr = valueToSearch.toLowerCase().split("");
 
+
         int position = 0;
-        boolean matchFound = false;
 
-        for (String charInSearch : valueToSearchArr) {
-            matchFound = false;
-            for (; position < templateArr.length && !matchFound; position++) {
-
-                if (charInSearch.equals(templateArr[position])) {
-                    matchFound = true;
+        for (String queryChar : templateArr) {
+            if (queryChar.equals(valueToSearchArr[position])) {
+                position++;
+                if (position >= valueToSearch.length()) {
+                    return true;
                 }
             }
         }
-        return matchFound;
+        return false;
     }
 
 

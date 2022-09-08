@@ -1,9 +1,8 @@
 package com.spnikit.homework2;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static com.spnikit.homework2.ComplexExamples.*;
+import static com.spnikit.homework2.ComplexExamples.fuzzySearch;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ComplexExamplesTest {
